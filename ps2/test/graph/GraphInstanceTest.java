@@ -6,6 +6,7 @@ package graph;
 import static org.junit.Assert.*;
 
 import java.util.Collections;
+import java.util.Map;
 
 import org.junit.Test;
 
@@ -19,9 +20,7 @@ import org.junit.Test;
  */
 public abstract class GraphInstanceTest {
     
-    // Testing strategy
-    //   TODO
-    
+
     /**
      * Overridden by implementation-specific test classes.
      * 
@@ -41,6 +40,55 @@ public abstract class GraphInstanceTest {
                 Collections.emptySet(), emptyInstance().vertices());
     }
     
-    // TODO other tests for instance methods of Graph
+        // Add a vertex to the graph and test if it exists
+    @Test
+    public void testAddVertex() {
+        Graph<String> graph = emptyInstance();
+        assertTrue(graph.add("A"));
+        assertTrue(graph.vertices().contains("A"));
+    }
+
+    // Add an edge between vertices and test if it exists
+    @Test
+    public void testAddEdge() {
+        Graph<String> graph = emptyInstance();
+        graph.add("A");
+        graph.add("B");
+        assertEquals(0, graph.set("A", "B", 5));
+        assertEquals(5, (int) graph.sources("B").get("A"));
+    }
+
+    // Remove a vertex and test if it doesn't exist anymore
+    @Test
+    public void testRemoveVertex() {
+        Graph<String> graph = emptyInstance();
+        graph.add("A");
+        assertTrue(graph.remove("A"));
+        assertFalse(graph.vertices().contains("A"));
+    }
+
+    // Retrieve sources for a target vertex and test the result
+    @Test
+    public void testSources() {
+        Graph<String> graph = emptyInstance();
+        graph.add("A");
+        graph.add("B");
+        graph.set("A", "B", 7);
+        Map<String, Integer> sources = graph.sources("B");
+        assertEquals(1, sources.size());
+        assertEquals(7, (int) sources.get("A"));
+    }
+
+    // Retrieve targets for a source vertex and test the result
+    @Test
+    public void testTargets() {
+        Graph<String> graph = emptyInstance();
+        graph.add("A");
+        graph.add("B");
+        graph.set("A", "B", 7);
+        Map<String, Integer> targets = graph.targets("A");
+        assertEquals(1, targets.size());
+        assertEquals(7, (int) targets.get("B"));
+    }
     
 }
