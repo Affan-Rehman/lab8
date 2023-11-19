@@ -1,11 +1,7 @@
-/* Copyright (c) 2015-2016 MIT 6.005 course staff, all rights reserved.
- * Redistribution of original or derived work requires permission of course staff.
- */
 package graph;
 
-import static org.junit.Assert.*;
-
 import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  * Tests for ConcreteVerticesGraph.
@@ -17,29 +13,25 @@ import org.junit.Test;
  */
 public class ConcreteVerticesGraphTest extends GraphInstanceTest {
     
-    /*
-     * Provide a ConcreteVerticesGraph for tests in GraphInstanceTest.
-     */
-    @Override public Graph<String> emptyInstance() {
+    @Override
+    public Graph<String> emptyInstance() {
         return new ConcreteVerticesGraph();
     }
     
-    /*
-     * Testing ConcreteVerticesGraph...
-     */
+    // Tests for ConcreteVerticesGraph.toString()
+    @Test
+    public void testToStringEmptyGraph() {
+        Graph<String> graph = emptyInstance();
+        assertEquals("Vertices: []\n", graph.toString());
+    }
     
-    // Testing strategy for ConcreteVerticesGraph.toString()
-    //   TODO
+    @Test
+    public void testToStringNonEmptyGraph() {
+        Graph<String> graph = emptyInstance();
+        graph.add("A");
+        graph.add("B");
+        assertEquals("Vertices: [A, B]\n", graph.toString());
+    }
     
-    // TODO tests for ConcreteVerticesGraph.toString()
-    
-    /*
-     * Testing Vertex...
-     */
-    
-    // Testing strategy for Vertex
-    //   TODO
-    
-    // TODO tests for operations of Vertex
-    
+    // Additional tests for ConcreteVerticesGraph methods can be added here
 }

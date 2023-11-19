@@ -1,13 +1,7 @@
-/* Copyright (c) 2015-2016 MIT 6.005 course staff, all rights reserved.
- * Redistribution of original or derived work requires permission of course staff.
- */
 package graph;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * An implementation of Graph.
@@ -20,69 +14,157 @@ public class ConcreteEdgesGraph implements Graph<String> {
     private final List<Edge> edges = new ArrayList<>();
     
     // Abstraction function:
-    //   TODO
+    // Represents a weighted directed graph with string labels using edges.
+    
     // Representation invariant:
-    //   TODO
+    // The set of vertices is valid, and the list of edges corresponds to the actual edges in the graph.
+    // Each edge's source and target vertices must be present in the vertices set.
+    
     // Safety from rep exposure:
-    //   TODO
+    // Both vertices and edges are private final fields.
+    // They are not exposed directly, preventing rep exposure.
     
-    // TODO constructor
-    
-    // TODO checkRep
-    
-    @Override public boolean add(String vertex) {
-        throw new RuntimeException("not implemented");
+    // Constructor:
+    public ConcreteEdgesGraph() {
+        // No specific initialization needed for now
     }
     
-    @Override public int set(String source, String target, int weight) {
-        throw new RuntimeException("not implemented");
+    // checkRep method:
+    private void checkRep() {
+        for (Edge edge : edges) {
+            assert vertices.contains(edge.getSource()) : "Edge source not in vertices set";
+            assert vertices.contains(edge.getTarget()) : "Edge target not in vertices set";
+        }
     }
     
-    @Override public boolean remove(String vertex) {
-        throw new RuntimeException("not implemented");
+    @Override
+    public boolean add(String vertex) {
+        checkRep();
+        boolean added = vertices.add(vertex);
+        checkRep();
+        return added;
     }
     
-    @Override public Set<String> vertices() {
-        throw new RuntimeException("not implemented");
+    @Override
+    public int set(String source, String target, int weight) {
+        checkRep();
+        Edge newEdge = new Edge(source, target, weight);
+        int previousWeight = 0;
+        
+        // Check if the edge already exists
+        int existingEdgeIndex = edges.indexOf(newEdge);
+        if (existingEdgeIndex != -1) {
+            previousWeight = edges.get(existingEdgeIndex).getWeight();
+            edges.set(existingEdgeIndex, newEdge);
+        } else {
+            edges.add(newEdge);
+        }
+        
+        checkRep();
+        return previousWeight;
     }
     
-    @Override public Map<String, Integer> sources(String target) {
-        throw new RuntimeException("not implemented");
+    @Override
+    public boolean remove(String vertex) {
+        checkRep();
+        boolean removed = vertices.remove(vertex);
+        
+        // Remove edges associated with the removed vertex
+        edges.removeIf(edge -> edge.getSource().equals(vertex) || edge.getTarget().equals(vertex));
+        
+        checkRep();
+        return removed;
     }
     
-    @Override public Map<String, Integer> targets(String source) {
-        throw new RuntimeException("not implemented");
+    @Override
+    public Set<String> vertices() {
+        checkRep();
+        return new HashSet<>(vertices); // Return a copy to prevent modification outside the class
     }
     
-    // TODO toString()
+    @Override
+    public Map<String, Integer> sources(String target) {
+        checkRep();
+        return edges.stream()
+                .filter(edge -> edge.getTarget().equals(target))
+                .collect(Collectors.toMap(Edge::getSource, Edge::getWeight));
+    }
     
+    @Override
+    public Map<String, Integer> targets(String source) {
+        checkRep();
+        return edges.stream()
+                .filter(edge -> edge.getSource().equals(source))
+                .collect(Collectors.toMap(Edge::getTarget, Edge::getWeight));
+    }
+    
+    @Override
+    public String toString() {
+        checkRep();
+        StringBuilder sb = new StringBuilder();
+        sb.append("Vertices: ").append(vertices).append("\n");
+        sb.append("Edges: ").append(edges).append("\n");
+        return sb.toString();
+    }
 }
 
-/**
- * TODO specification
- * Immutable.
- * This class is internal to the rep of ConcreteEdgesGraph.
- * 
- * <p>PS2 instructions: the specification and implementation of this class is
- * up to you.
- */
+// Edge class:
 class Edge {
-    
-    // TODO fields
+    private final String source;
+    private final String target;
+    private final int weight;
     
     // Abstraction function:
-    //   TODO
+    // Represents an edge in the weighted directed graph.
+    
     // Representation invariant:
-    //   TODO
+    // Source and target vertices must not be null.
+    
     // Safety from rep exposure:
-    //   TODO
+    // Fields are private and final. No mutators provided.
     
-    // TODO constructor
+    // Constructor:
+    public Edge(String source, String target, int weight) {
+        this.source = source;
+        this.target = target;
+        this.weight = weight;
+        checkRep();
+    }
     
-    // TODO checkRep
+    // checkRep method:
+    private void checkRep() {
+        assert source != null : "Source vertex is null";
+        assert target != null : "Target vertex is null";
+    }
     
-    // TODO methods
+    // Methods:
+    public String getSource() {
+        return source;
+    }
     
-    // TODO toString()
+    public String getTarget() {
+        return target;
+    }
     
+    public int getWeight() {
+        return weight;
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Edge edge = (Edge) obj;
+        return source.equals(edge.source) && target.equals(edge.target);
+    }
+    
+    @Override
+    public int hashCode() {
+        return Objects.hash(source, target);
+    }
+    
+    @Override
+    public String toString() {
+        return "(" + source + " -> " + target + ", weight=" + weight + ")";
+    }
 }
