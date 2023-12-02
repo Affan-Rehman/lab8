@@ -27,4 +27,5 @@ public class ConcreteEdgesGraphTest extends GraphInstanceTest {
     
     @Test
     public void testToStringNonEmptyGraph() {
-        Graph<String> graph = empty
+        Graph<String> graph = empty;
+    }
